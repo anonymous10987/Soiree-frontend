@@ -18,118 +18,7 @@ export interface BaseParams {
     language?: string,
 }
 
-interface PollingMultiDiffContainerProps {
-    getPathParams: (match: any) => BaseParams
-    setError: (err: string) => void
-    error: string
-    selectedSearchParam?: number;
-}
-
-// const JsonDisplay = (props: PollingMultiDiffContainerProps) => {
-//     const [jsonData, setJsonData] = useState(null);
-//     const params = props.getPathParams(props);
-//     console.log(params)
-//     useEffect(() => {
-//       const fetchData = async () => {
-//         try {
-//           // 根据参数来动态导入不同的 JSON 文件
-//         //   const file_path = `./web/assets/data/${params.address}/Solidity/Bytecode.json`
-//           // const file_path = "../assets/sample.json"
-//           // console.log(file_path)
-//           // const jsonModule = await import(`${file_path}`);
-//           // const jsonModule = await import("../public/sample.json")
-//           // const jsonModule = await import(`../public/data/${params.address}/Solidity/Bytecode.json`)
-//           // const dynamicPath = `../public/data/${params.address}/Solidity/Bytecode.json`
-//           // console.log(dynamicPath)
-//           // ../public/data/0x0b76544f6c413a555f309bf76260d1e02377c02a/Solidity/Bytecode.json
-//           // const jsonModule = await import("../public/data/0x0b76544f6c413a555f309bf76260d1e02377c02a/Solidity/Bytecode.json")
-//           // const jsonModule = await import(dynamicPath)
-//           const dynamicPath = `../public/data/${params.address}/Solidity/Bytecode.json`;
-//           console.log('Dynamic Path:', dynamicPath);
-//           const jsonModule = await import(dynamicPath);
-//           const data = jsonModule.default; // 获取导入的 JSON 数据
-//           setJsonData(data);
-//         } catch (error) {
-//           console.error('Error loading JSON:', error);
-//         }
-//       };
-  
-//       fetchData();
-//     });
-//     console.log(jsonData)
-  
-//     if (!jsonData) {
-//       return <div>Loading...</div>;
-//     }
-//     return (
-//       <div>
-//         {jsonData['ir']}
-//         {/* <h1>JSON Data</h1>
-//         <ul>
-//           {jsonData.map((item) => (
-//             <li key={item.id}>{item.name}</li>
-//           ))}
-//         </ul> */}
-//       </div>
-//     );
-//   };
-
-
-// const JsonDisplay = (file_url: string) => {
-//     const [jsonData, setJsonData] = useState(null);
-//     // const params = props.getPathParams(props);
-//     // console.log(params)
-//     useEffect(() => {
-//       const fetchData = async () => {
-//         try {
-//           // 根据参数来动态导入不同的 JSON 文件
-//         //   const file_path = `./web/assets/data/${params.address}/Solidity/Bytecode.json`
-//           // const file_path = "../assets/sample.json"
-//           // console.log(file_path)
-//           // const jsonModule = await import(`${file_path}`);
-//           // const jsonModule = await import("../public/sample.json")
-//           // const jsonModule = await import(`../public/data/${params.address}/Solidity/Bytecode.json`)
-//           // const dynamicPath = `../public/data/${params.address}/Solidity/Bytecode.json`
-//           // console.log(dynamicPath)
-//           // ../public/data/0x0b76544f6c413a555f309bf76260d1e02377c02a/Solidity/Bytecode.json
-//           // const jsonModule = await import("../public/data/0x0b76544f6c413a555f309bf76260d1e02377c02a/Solidity/Bytecode.json")
-//           // const jsonModule = await import(dynamicPath)
-//           // const dynamicPath = `../public/data/${params.address}/Solidity/Bytecode.json`;
-//           // console.log('Dynamic Path:', dynamicPath);
-//           console.log(file_url)
-//           const jsonModule = await import(`${file_url}`);
-//           const data = jsonModule.default; // 获取导入的 JSON 数据
-//           setJsonData(data);
-//         } catch (error) {
-//           console.error('Error loading JSON:', error);
-//         }
-//       };
-  
-//       fetchData();
-//     });
-//     console.log(jsonData)
-  
-//     if (!jsonData) {
-//       return <div>Loading...</div>;
-//     }
-//     return (
-//       <div>
-//         {jsonData['ir']}
-//         {/* <h1>JSON Data</h1>
-//         <ul>
-//           {jsonData.map((item) => (
-//             <li key={item.id}>{item.name}</li>
-//           ))}
-//         </ul> */}
-//       </div>
-//     );
-//   };
-
-interface DataRendererProps {
-  address: string;
-}
-
-const DataRenderer: React.FC<DataRendererProps> = ({ address }) => {
+const DataRenderer: React.FC<BaseParams> = ({ address, format, language }) => {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
@@ -160,23 +49,15 @@ export const CodeRoutes = () => {
     const [error, setError] = useState(undefined);
 
     const baseMatch = useMatch("/reversedcode/:network/:address/:format/:language")
-    const getBaseParams = () => {
-        return {
-            address:baseMatch.params.address,
-            format:baseMatch.params.format,
-            language:baseMatch.params.language
-        }
-    }
-
-    // const jsondisplay = JsonDisplay("../public/data/0x0b76544f6c413a555f309bf76260d1e02377c02a/Solidity/Bytecode.json")
-    // const jsondisplay = DataRenderer("0x0b76544f6c413a555f309bf76260d1e02377c02a")
 
     return <Routes>
         <Route path="/reversedcode/:network/:address/:format/:language" element={
             <AppLayout>
                 <Layout>
-                  {/* {jsondisplay} */}
-                  <DataRenderer address='0x0b76544f6c413a555f309bf76260d1e02377c02a' />
+                  <DataRenderer 
+                    address={baseMatch.params.address}
+                    format={baseMatch.params.format}
+                    language={baseMatch.params.language} />
                 </Layout>
             </AppLayout>
         } />
