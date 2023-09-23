@@ -18,53 +18,63 @@ export interface BaseParams {
     language?: string,
 }
 
-const DataRenderer: React.FC<BaseParams> = ({ address, format, language }) => {
-  const [data, setData] = useState<any>(null);
+interface BaseParamsProps {
+  getBaseParams: (match:any) => BaseParams,
+  setError: (err: string) => void
+  error: string
+  selectedSearchParam?: number;
+}
 
+export function DataLoader(props: BaseParamsProps) {
+  const [data, setData] = useState<any>(null);
+  const baseParams = props.getBaseParams(props)
+  console.log(baseParams)
   useEffect(() => {
-    // axios.get(`/public/data/${address}/Solidity/Bytecode.json`)
-    axios.get(`http://localhost:3003/data/${address}/Solidity/Bytecode.json`)
+    axios.get(`http://localhost:3003/data/${baseParams.address}/${baseParams.language}/${baseParams.format}.json`)
       .then((response) => {
         console.log(response)
         setData(response.data);
       })
       .catch((error) => {
-        console.error(`Error loading data for address ${address}: ${error}`);
+        console.error(`Error loading data for address ${baseParams.address}: ${error}`);
       });
-  }, [address]);
+  }, [baseParams.address]);
 
   return (
     <div>
-      <h1>Data for Address: {address}</h1>
+      <h1>Data for Address: {baseParams.address}</h1>
       <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
-};
-
-export default DataRenderer;
-
-// export default JsonDisplay;
+}
 
 export const CodeRoutes = () => {
     const [error, setError] = useState(undefined);
 
-    const baseMatch = useMatch("/reversedcode/:network/:address/:format/:language")
+    const baseMatch = useMatch("/:format/:language/:address")
+    const getBaseParams = () => {
+      return {
+        address: baseMatch.params.address,
+        format: baseMatch.params.format,
+        language: baseMatch.params.language
+      }
+    }
 
     return <Routes>
-        <Route path="/reversedcode/:network/:address/:format/:language" element={
-            <AppLayout>
-                <Layout>
-                  <DataRenderer 
-                    address={baseMatch.params.address}
-                    format={baseMatch.params.format}
-                    language={baseMatch.params.language} />
-                </Layout>
-            </AppLayout>
-        } />
         <Route path="/*"
             element={
                 <HomeContent />
             } />
+        <Route path="/:format/:language/:address" element={
+            <AppLayout>
+                <Layout>
+                  <DataLoader 
+                    getBaseParams = {getBaseParams}
+                    error={error}
+                    setError={setError} />
+                </Layout>
+            </AppLayout>
+        } />
     </Routes>
 }
 
