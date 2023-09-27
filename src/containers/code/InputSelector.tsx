@@ -1,17 +1,16 @@
 import React, { HTMLProps, useEffect } from 'react'
 import { Radio, RadioChangeEvent, Space } from "antd"
-import { Upgrade } from "../../../lib/upgrade"
-import { DiffOptionCard } from '../option_card/DiffOptionCard'
-import { useSearchParams } from 'react-router-dom';
-import { DisabledOptionCard } from '../option_card/DisabledOptionCard';
-import { getKey } from '../../../lib/utils/format';
 
-interface DiffSelectorProps {
-    upgrades: Upgrade[];
-    setSelectedDiff: (upgrade: Upgrade) => void;
+interface InputType {
+    input:string
 }
 
-export const getOptionCard = (upgrade: Upgrade) => {
+interface InputSelectorProps {
+    inputs: InputType[];
+    setSelectedDiff: (upgrade: InputType) => void;
+}
+
+export const getOptionCard = (upgrade: InputType) => {
     if (upgrade.verified) {
         return <DiffOptionCard upgrade={upgrade} />
     } else {
@@ -19,21 +18,21 @@ export const getOptionCard = (upgrade: Upgrade) => {
     }
 }
 
-export const DiffSelector = (props: DiffSelectorProps & HTMLProps<void>) => {
+export const InputSelector = (props: InputSelectorProps & HTMLProps<void>) => {
     let [searchParams, setSearchParams] = useSearchParams();
 
-    let upgrades = props.upgrades;
+    let inputs = props.inputs;
 
-    const upgradesIndex = upgrades.reduce((ind, u, i) => {
+    const inputsIndex = inputs.reduce((ind, u, i) => {
         ind[getKey(u)] = [u, i]
         return ind;
     }, {})
 
     const setNewValue = (e: RadioChangeEvent) => {
         const id = e.target.value;
-        const [upgrade, index] = upgradesIndex[id];
+        const [upgrade, index] = inputsIndex[id];
         props.setSelectedDiff(upgrade);
-        searchParams.set('selected', (upgrades.length - index).toString())
+        searchParams.set('selected', (inputs.length - index).toString())
         setSearchParams(searchParams);
     }
 
@@ -42,26 +41,26 @@ export const DiffSelector = (props: DiffSelectorProps & HTMLProps<void>) => {
         selectedSearchParam = parseInt(searchParams.get('selected'))
     } catch (e) { }
 
-    let _selected = selectedSearchParam >= upgrades.length ? 0 : upgrades.length - selectedSearchParam
+    let _selected = selectedSearchParam >= inputs.length ? 0 : inputs.length - selectedSearchParam
     if (!selectedSearchParam) {
         _selected = 0;
     }
 
     useEffect(() => {
         if (selectedSearchParam)
-            props.setSelectedDiff(upgrades[upgrades.length - selectedSearchParam]);
+            props.setSelectedDiff(inputs[inputs.length - selectedSearchParam]);
     })
 
-    const _selectedKey = getKey(upgrades[_selected]);
+    const _selectedKey = getKey(inputs[_selected]);
     return <Radio.Group defaultValue={_selectedKey} buttonStyle="solid" onChange={setNewValue}>
         <Space direction="vertical">
             {
-                upgrades.map(u => {
+                inputs.map(u => {
                     return <Radio.Button
                         value={getKey(u)}
                         id={getKey(u)}
                         key={getKey(u)}
-                        className='upgrade_selector_option'
+                        className='input_selector_option'
                     >
                         {getOptionCard(u)}
                     </Radio.Button>

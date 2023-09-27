@@ -6,19 +6,15 @@ import {
     Routes,
     useMatch
 } from "react-router-dom";
-import { PollingMultiDiffContainer } from './containers/code/PollingMultiDiffContainer';
 import { AppLayout } from './containers/common/AppLayout';
 import { HomeContent } from './containers/home/Home';
 import axios from 'axios';
 
-
-// import MarkdownIt from 'markdown-it'
-// import mdKatex from '@traptitech/markdown-it-katex'
-// import hljs from 'highlight.js';
 import ReactMarkdown from 'react-markdown'
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
 import {dark, vs} from 'react-syntax-highlighter/dist/esm/styles/prism'
-
+import Sider from 'antd/es/layout/Sider';
+import { Content } from 'antd/es/layout/layout';
 export interface BaseParams {
     network?: string,
     address?: string,
@@ -32,27 +28,6 @@ interface BaseParamsProps {
   error: string
   selectedSearchParam?: number;
 }
-
-// const mdi = new MarkdownIt({
-//   linkify: true,
-//   highlight(code, language) {
-//       const validLang = !!(language && hljs.getLanguage(language))
-//       if (validLang) {
-//       const lang = language ?? ''
-//       return highlightBlock(hljs.highlight(lang, code, true).value, lang)
-//       }
-//       return highlightBlock(hljs.highlightAuto(code).value, '')
-//   }
-// })
-// mdi.use(mdKatex, { blockClass: 'katexmath-block rounded-md p-[10px]', errorColor: ' #cc0000' })
-
-// function highlightBlock(str, lang) {
-//   return `<pre class="pre-code-box"><div class="pre-code-header"><span class="code-block-header__lang">${lang}</span><span class="code-block-header__copy">Copy Code</span></div><div class="pre-code"><code class="hljs code-block-body ${lang}">${str}</code></div></pre>`
-// }
-
-// const getMdiText = (value) => {
-//     return mdi.render(value)
-// }
 
 export function DataLoader(props: BaseParamsProps) {
   const [data, setData] = useState<any>(null);
@@ -98,6 +73,26 @@ export function DataLoader(props: BaseParamsProps) {
   );
 }
 
+export function MultiInputsContainer(props) {
+  return (<><Sider className='sider' style={{
+                background: 'white'
+            }}
+                width={220}>
+                <div className='input_selector'>
+                    Hello world
+                </div>
+            </Sider>
+            <Content style={{
+                background: 'white'
+            }}>
+            <div className='code_viewer'>
+                Hello world
+            </div>
+
+            </Content>
+      </>)  
+}
+
 export const CodeRoutes = () => {
     const [error, setError] = useState(undefined);
 
@@ -118,10 +113,13 @@ export const CodeRoutes = () => {
         <Route path="/:format/:language/:address" element={
             <AppLayout>
                 <Layout>
-                  <DataLoader 
+                  <MultiInputsContainer>
+                    
+                  </MultiInputsContainer>
+                  {/* <DataLoader 
                     getBaseParams = {getBaseParams}
                     error={error}
-                    setError={setError} />
+                    setError={setError} /> */}
                 </Layout>
             </AppLayout>
         } />
