@@ -12,9 +12,12 @@ import { HomeContent } from './containers/home/Home';
 import axios from 'axios';
 
 
-import MarkdownIt from 'markdown-it'
-import mdKatex from '@traptitech/markdown-it-katex'
-import hljs from 'highlight.js';
+// import MarkdownIt from 'markdown-it'
+// import mdKatex from '@traptitech/markdown-it-katex'
+// import hljs from 'highlight.js';
+import ReactMarkdown from 'react-markdown'
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
+import {dark, vs} from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 export interface BaseParams {
     network?: string,
@@ -30,51 +33,67 @@ interface BaseParamsProps {
   selectedSearchParam?: number;
 }
 
-const mdi = new MarkdownIt({
-  linkify: true,
-  highlight(code, language) {
-      const validLang = !!(language && hljs.getLanguage(language))
-      if (validLang) {
-      const lang = language ?? ''
-      return highlightBlock(hljs.highlight(lang, code, true).value, lang)
-      }
-      return highlightBlock(hljs.highlightAuto(code).value, '')
-  }
-})
-mdi.use(mdKatex, { blockClass: 'katexmath-block rounded-md p-[10px]', errorColor: ' #cc0000' })
+// const mdi = new MarkdownIt({
+//   linkify: true,
+//   highlight(code, language) {
+//       const validLang = !!(language && hljs.getLanguage(language))
+//       if (validLang) {
+//       const lang = language ?? ''
+//       return highlightBlock(hljs.highlight(lang, code, true).value, lang)
+//       }
+//       return highlightBlock(hljs.highlightAuto(code).value, '')
+//   }
+// })
+// mdi.use(mdKatex, { blockClass: 'katexmath-block rounded-md p-[10px]', errorColor: ' #cc0000' })
 
-function highlightBlock(str, lang) {
-  return `<pre class="pre-code-box"><div class="pre-code-header"><span class="code-block-header__lang">${lang}</span><span class="code-block-header__copy">复制代码</span></div><div class="pre-code"><code class="hljs code-block-body ${lang}">${str}</code></div></pre>`
-}
+// function highlightBlock(str, lang) {
+//   return `<pre class="pre-code-box"><div class="pre-code-header"><span class="code-block-header__lang">${lang}</span><span class="code-block-header__copy">Copy Code</span></div><div class="pre-code"><code class="hljs code-block-body ${lang}">${str}</code></div></pre>`
+// }
 
-const getMdiText = (value) => {
-    return mdi.render(value)
-}
+// const getMdiText = (value) => {
+//     return mdi.render(value)
+// }
 
 export function DataLoader(props: BaseParamsProps) {
   const [data, setData] = useState<any>(null);
   const baseParams = props.getBaseParams(props)
-  console.log(baseParams)
+  // console.log(baseParams)
   useEffect(() => {
     axios.get(`http://localhost:3003/data/${baseParams.address}/${baseParams.language}/${baseParams.format}.json`)
       .then((response) => {
-        // console.log(response)
-        setData(response.data);
+        setData(response.data["choices"][0]["message"]["content"])
       })
       .catch((error) => {
         console.error(`Error loading data for address ${baseParams.address}: ${error}`);
       });
   }, [baseParams.address]);
-  // console.log("the loaded data is" + data)
-  // const jsonResponse = JSON.stringify(data, null, 2)
-  // console.log(jsonResponse)
-  console.log(data.json())
-  // console.log(data["choices"][0]["message"]["content"])
+  
   return (
     <div>
       <h1>Data for Address: {baseParams.address}</h1>
-      {/* <pre>{jsonResponse}</pre> */}
-      {/* <pre className="pre-code-box"><div className="pre-code-header"><span className="code-block-header__lang">Solidity</span><span className="code-block-header__copy">copy code</span></div><div className="pre-code"><code className="hljs code-block-body ${lang}">${jsonResponse["choices"][0]["message"]["content"]}</code></div></pre> */}
+      <ReactMarkdown
+        children={data}
+        components={{
+          code(props) {
+            const {children, className, inline, node, ...rest} = props
+            const match = /language-(\w+)/.exec(className || '')
+            return !inline && match ? (
+              <SyntaxHighlighter
+                {...rest}
+                children={String(children).replace(/\n$/, '')}
+                style={vs}
+                showLineNumbers
+                language={match[1]}
+                PreTag="div"
+              />
+            ) : (
+              <code {...rest} className={className}>
+                {children}
+              </code>
+            )
+          }
+        }}
+      ></ReactMarkdown>
     </div>
   );
 }
