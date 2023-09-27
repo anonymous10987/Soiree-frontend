@@ -106,15 +106,11 @@ function getInfoContent(upgrade?: Upgrade) {
 function renderContent(
     info?: string,
     error?: string,
-    dataAvailable?: boolean,
     loadingMsg?: string,
     selectedUpgrade?: Upgrade) {
-    if ((!error && !info && !dataAvailable) || loadingMsg) {
+    if ((!error && !info && !selectedUpgrade) || loadingMsg) {
         const message = loadingMsg ? loadingMsg : 'Loading'
         return <Loading message={message} />
-    } else if (dataAvailable && !selectedUpgrade) {
-        return <InfoContent
-            info={'No upgrades available for this proxy'} />
     } else if (info) {
         return <InfoContent
             info={info} />
@@ -162,7 +158,7 @@ export function MultiDiffContainer(props: MultiDiffContainerProps) {
     fillVerified(upgrades, verifiedImpls);
     upgrades = trimFirstUpgradeIfEmpty(upgrades);
 
-    if (upgrades && upgrades.length && !selectedUpgrade) {
+    if (props.data?.upgrades && props.data?.upgrades.length && !selectedUpgrade) {
         setSelectedUpgrade(upgrades[0]);
     }
 
@@ -198,7 +194,6 @@ export function MultiDiffContainer(props: MultiDiffContainerProps) {
             {renderContent(
                 props.data?.info,
                 props.data?.error,
-                !!(props.data?.upgrades),
                 props.loadingMsg,
                 selectedUpgrade)}
         </Content>

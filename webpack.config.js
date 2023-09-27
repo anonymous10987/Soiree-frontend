@@ -3,9 +3,9 @@ const path = require('path');
 module.exports = [{
   output: {
     filename: 'index.bundle.js',
-    path: path.resolve(__dirname, 'web/dist'),
+    path: path.resolve(__dirname, 'dist'),
   },
-  entry: path.resolve(__dirname, 'web/src/index.tsx'),
+  entry: path.resolve(__dirname, 'src/index.tsx'),
   module: {
     rules: [
       {
@@ -28,15 +28,15 @@ module.exports = [{
     fallback: {
       path: require.resolve('path-browserify')
     }, 
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js', '.json'],
   },
   devServer: {
-    port: 8001,
+    port: 3003,
     historyApiFallback: {
       index: 'index.html'
     },
     static: {
-      directory: path.join(__dirname, "web/dist"),
+      directory: path.join(__dirname, "public"),
     },
   }
 }]

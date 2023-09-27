@@ -1,0 +1,80 @@
+import { Button, Col, Form, Input, Select, Row } from "antd";
+import React, { useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { AppLayout } from '../common/AppLayout';
+
+
+export const HomeContent = () => {
+  const [redirectUrl, setRedirectUrl] = useState(undefined)
+  const onFinish = (val: any) => {
+    const url = `/${val.format}/${val.language}/${val.address}`
+    setRedirectUrl(url)
+  }
+  if (!redirectUrl) {
+    return <AppLayout>
+      <div className='home_content'>
+        <Col offset={8} span={8} >
+          <Form className="home_form"
+            name="form_item_path"
+            layout="vertical"
+            onFinish={onFinish}
+            initialValues={{
+              'format': 'DecompiledCode',
+              'language': 'Solidity',
+              'address': '0x0b76544f6c413a555f309bf76260d1e02377c02a',
+            }}>
+            {/* <Form.Item name="network" label="Network">
+              <Select
+                options={[
+                  { value: 'ethereum', label: 'Ethereum' },
+                  { value: 'bscscan', label: 'BSC' },
+                  { value: 'ftmscan', label: 'Fantom' },
+                  { value: 'polygonscan', label: 'Polygon' },
+                  { value: 'arbiscan', label: 'Arbitrum' },
+                  { value: 'snowtrace', label: 'Avalanche' },
+                  { value: 'cronoscan', label: 'Cronos' },
+                  { value: 'moonbeam', label: 'Moonbeam' },
+                  { value: 'optimistic.etherscan', label: 'Optimism' },
+                ]}
+              />
+            </Form.Item> */}
+            <Form.Item name="format" label="Input Format">
+              <Select
+                options={[
+                  {value: "Bytecode", label:'Bytecode'},
+                  {value: "DecompiledCode", label:'DecompiledCode'},
+                  {value: "Description", label:'Description'}                  
+                ]}
+              />
+            </Form.Item>
+            <Form.Item name="language" label="Transformed Language">
+              <Select
+                options={[
+                  {value: "Solidity", label:'Solidity'},
+                  {value: "Vyper", label:'Vyper'}
+                ]}
+              />
+            </Form.Item>
+            <Form.Item name="address" label="Contract address">
+              <Input placeholder={'Address of a proxy'} />
+            </Form.Item>
+            <Row justify="center">
+              <Col span={5}>
+                <Button type="primary" htmlType="submit">
+                  Go
+                </Button>
+              </Col>
+              <Col span={5}>
+                <Button type="primary" htmlType="submit">
+                  Random
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Col>
+      </div>
+    </AppLayout>
+  } else {
+    return <Navigate replace to={redirectUrl} />
+  }
+}

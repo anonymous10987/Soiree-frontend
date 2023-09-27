@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "lib": ["es2021", "dom"],
+        "jsx": "react",
+        // "composite": true,
+        "outDir": "dist",
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "baseUrl":".",
+    },
+    "exclude": [
+        "node_modules",
+        "styles"
+    ],
+    "include": [
+        "src/*",
+        "src/**/*",
+        "public/*",
+        "public/**/*"
+      ]
+}
