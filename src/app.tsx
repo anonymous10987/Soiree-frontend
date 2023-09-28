@@ -15,14 +15,19 @@ import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
 import {dark, vs} from 'react-syntax-highlighter/dist/esm/styles/prism'
 import Sider from 'antd/es/layout/Sider';
 import { Content } from 'antd/es/layout/layout';
-import {InputType, InputSelector} from './containers/code/InputSelector';
+import {InputType, InputSelector, Result} from './containers/code/InputSelector';
 import { SelectorSkeleton } from './containers/code/SelectorSkeleton';
 
 export interface BaseParams {
-    network?: string,
     address?: string,
-    format?: string,
-    language?: string,
+    input_type?: string,
+    output_type?: string,
+}
+
+export interface ContractMeta {
+    address?: string,
+    output_type?: string,
+    source?: string,
 }
 
 interface BaseParamsProps {
@@ -37,7 +42,7 @@ export function DataLoader(props: BaseParamsProps) {
   const baseParams = props.getBaseParams(props)
   // console.log(baseParams)
   useEffect(() => {
-    axios.get(`http://localhost:3003/data/${baseParams.address}/${baseParams.language}/${baseParams.format}.json`)
+    axios.get(`http://localhost:3003/data/${baseParams.address}/${baseParams.output_type}/${baseParams.input_type}.json`)
       .then((response) => {
         setData(response.data["choices"][0]["message"]["content"])
       })
@@ -54,14 +59,14 @@ export function DataLoader(props: BaseParamsProps) {
         components={{
           code(props) {
             const {children, className, inline, node, ...rest} = props
-            const match = /language-(\w+)/.exec(className || '')
+            const match = /output_type-(\w+)/.exec(className || '')
             return !inline && match ? (
               <SyntaxHighlighter
                 {...rest}
                 children={String(children).replace(/\n$/, '')}
                 style={vs}
                 showLineNumbers
-                language={match[1]}
+                output_type={match[1]}
                 PreTag="div"
               />
             ) : (
@@ -76,30 +81,61 @@ export function DataLoader(props: BaseParamsProps) {
   );
 }
 
-export function formatInputTypes(input_types: InputType[]) {
-  input_types = input_types.sort((a, b) => {
-      if (a.input_type < b.input_type)
-          return 1;
-      else if (a.input_type > b.input_type)
-          return -1;
-      else return 0;
-  })
-  return input_types;
-}
+export function MultiInputsContainer(props: BaseParamsProps) {
+  const [results, setResult] = useState<any>(null);
+  const baseParams = props.getBaseParams(props);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchedData: Result[] = [];
+  
+      for (const input_type of ["Bytecode", "DecompiledCode", "Description"]) {
+        for (const output_type of ["Solidity", "Vyper"]) {
+          try {
+            const response = await axios.get(
+              `http://localhost:3003/data/${baseParams.address}/${output_type}/${input_type}.json`
+            );
+  
+            if (response.data["status"] === "1") {
+              const selected =
+                input_type === baseParams.input_type &&
+                output_type === baseParams.output_type;
+  
+              fetchedData.push({
+                input_type: input_type,
+                output_type: output_type,
+                timestamp: response.data["created"],
+                selected: selected,
+                response: response.data["choices"][0]["message"]["content"],
+              });
+            }
+          } catch (error) {
+            console.error(`Error loading data for address ${baseParams.address}: ${error}`);
+          }
+        }
+      }
+  
+      setResult(fetchedData);
+    };
+  
+    fetchData();
+  }, [baseParams.address]);
 
-export function MultiInputsContainer(props) {
-
-  let input_types = formatInputTypes(props.data?.input_types || [])
-
+  // console.log("Input types" + input_types)
   return (<><Sider className='sider' style={{
                 background: 'white'
             }}
                 width={220}>
                 <div className='input_selector'>
                   {
-                      input_types?.length > 0 ?
+                      results?.length > 0 ?
                       <InputSelector
-                          input_types={input_types || []}
+                        input_types={results.map((item:Result) => ({
+                          input_type:item.input_type, 
+                          output_type:item.output_type, 
+                          timestamp:item.timestamp,
+                          selected:item.selected
+                        })) || []}
                       /> :
                       <SelectorSkeleton />
                   }
@@ -119,12 +155,12 @@ export function MultiInputsContainer(props) {
 export const CodeRoutes = () => {
     const [error, setError] = useState(undefined);
 
-    const baseMatch = useMatch("/:format/:language/:address")
+    const baseMatch = useMatch("/:input_type/:output_type/:address")
     const getBaseParams = () => {
       return {
         address: baseMatch.params.address,
-        format: baseMatch.params.format,
-        language: baseMatch.params.language
+        input_type: baseMatch.params.input_type,
+        output_type: baseMatch.params.output_type
       }
     }
 
@@ -133,16 +169,13 @@ export const CodeRoutes = () => {
             element={
                 <HomeContent />
             } />
-        <Route path="/:format/:language/:address" element={
+        <Route path="/:input_type/:output_type/:address" element={
             <AppLayout>
                 <Layout>
-                  <MultiInputsContainer>
-                    
-                  </MultiInputsContainer>
-                  {/* <DataLoader 
-                    getBaseParams = {getBaseParams}
-                    error={error}
-                    setError={setError} /> */}
+                  <MultiInputsContainer
+                  getBaseParams = {getBaseParams}
+                  error={error}
+                  setError={setError} />
                 </Layout>
             </AppLayout>
         } />
