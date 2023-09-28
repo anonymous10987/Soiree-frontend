@@ -15,6 +15,9 @@ import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
 import {dark, vs} from 'react-syntax-highlighter/dist/esm/styles/prism'
 import Sider from 'antd/es/layout/Sider';
 import { Content } from 'antd/es/layout/layout';
+import {InputType, InputSelector} from './containers/code/InputSelector';
+import { SelectorSkeleton } from './containers/code/SelectorSkeleton';
+
 export interface BaseParams {
     network?: string,
     address?: string,
@@ -73,13 +76,33 @@ export function DataLoader(props: BaseParamsProps) {
   );
 }
 
+export function formatInputTypes(input_types: InputType[]) {
+  input_types = input_types.sort((a, b) => {
+      if (a.input_type < b.input_type)
+          return 1;
+      else if (a.input_type > b.input_type)
+          return -1;
+      else return 0;
+  })
+  return input_types;
+}
+
 export function MultiInputsContainer(props) {
+
+  let input_types = formatInputTypes(props.data?.input_types || [])
+
   return (<><Sider className='sider' style={{
                 background: 'white'
             }}
                 width={220}>
                 <div className='input_selector'>
-                    Hello world
+                  {
+                      input_types?.length > 0 ?
+                      <InputSelector
+                          input_types={input_types || []}
+                      /> :
+                      <SelectorSkeleton />
+                  }
                 </div>
             </Sider>
             <Content style={{
