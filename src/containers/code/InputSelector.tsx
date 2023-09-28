@@ -8,6 +8,7 @@ export interface InputType {
     input_type:string,
     output_type?:string,
     timestamp?:number,
+    selected?:boolean,
     unavailable_reason?: UnavailableReason
 }
 
@@ -17,9 +18,20 @@ export interface LeftSide {
     selected_output_type?:string
 }
 
-interface InputSelectorProps {
-    input_types: InputType[];
-    // setSelectedDiff: (input_type: InputType) => void;
+export interface Result {
+    input_type:string,
+    output_type:string,
+    timestamp?:number,
+    selected?:boolean,
+    response?:string
+}
+
+export interface InputTypePros {
+    input_types: InputType[]
+}
+
+export interface ResultProps {
+    results: Result[]
 }
 // const formatDate = (ts: string) => {
 //     const m = new Date(parseInt(ts));
@@ -107,13 +119,11 @@ export const getOptionCard = (input_type: InputType) => {
     }
 }
 
-export const InputSelector = (props: InputSelectorProps) => {
+export const InputSelector = (prop:InputTypePros) => {
     // let [searchParams, setSearchParams] = useSearchParams();
-    
-    console.log(props)
-    let input_types = props.input_types
-
-    // const inputsIndex = input_types.reduce((ind, u, i) => {
+    let input_types = prop.input_types
+    console.log("InputSelector"+ prop)
+    // const inputsIndex = results.reduce((ind, u, i) => {
     //     ind[getKey(u)] = [u, i]
     //     return ind;
     // }, {})
@@ -140,10 +150,10 @@ export const InputSelector = (props: InputSelectorProps) => {
     //     if (selectedSearchParam)
     //         props.setSelectedDiff(input_types[input_types.length - selectedSearchParam]);
     // })
-    let _selected = 0
-    const _selectedKey = getKey(input_types[_selected]);
+    // let _selected = 0
+    // const _selectedKey = getKey(input_types[_selected]);
     // return <Radio.Group defaultValue={_selectedKey} buttonStyle="solid" onChange={setNewValue}>
-    return <Radio.Group defaultValue={_selectedKey} buttonStyle="solid">
+    return <Radio.Group defaultValue={1} buttonStyle="solid">
         <Space direction="vertical">
             {
                 input_types.map(u => {
