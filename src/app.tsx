@@ -88,9 +88,11 @@ export function MultiInputsContainer(props: BaseParamsProps) {
   useEffect(() => {
     const fetchData = async () => {
       const fetchedData: Result[] = [];
-  
-      for (const input_type of ["Bytecode", "DecompiledCode", "Description"]) {
-        for (const output_type of ["Solidity", "Vyper"]) {
+      const input_types = ["Bytecode", "DecompiledCode", "Description"]
+      // const output_types = ["Solidity", "Vyper"]
+      const output_types = ["Solidity"]
+      for (const input_type of input_types) {
+        for (const output_type of output_types) {
           try {
             const response = await axios.get(
               `http://localhost:3003/data/${baseParams.address}/${output_type}/${input_type}.json`
@@ -102,6 +104,7 @@ export function MultiInputsContainer(props: BaseParamsProps) {
                 output_type === baseParams.output_type;
   
               fetchedData.push({
+                address:baseParams.address,
                 input_type: input_type,
                 output_type: output_type,
                 timestamp: response.data["created"],
@@ -131,6 +134,7 @@ export function MultiInputsContainer(props: BaseParamsProps) {
                       results?.length > 0 ?
                       <InputSelector
                         input_types={results.map((item:Result) => ({
+                          address:item.address,
                           input_type:item.input_type, 
                           output_type:item.output_type, 
                           timestamp:item.timestamp,
@@ -155,7 +159,7 @@ export function MultiInputsContainer(props: BaseParamsProps) {
 export const CodeRoutes = () => {
     const [error, setError] = useState(undefined);
 
-    const baseMatch = useMatch("/:input_type/:output_type/:address")
+    const baseMatch = useMatch("/:address/:input_type/:output_type")
     const getBaseParams = () => {
       return {
         address: baseMatch.params.address,
@@ -169,7 +173,8 @@ export const CodeRoutes = () => {
             element={
                 <HomeContent />
             } />
-        <Route path="/:input_type/:output_type/:address" element={
+        {/* <Route path="/:input_type/:output_type/:address" element={ */}
+        <Route path="/:address/:input_type/:output_type" element={
             <AppLayout>
                 <Layout>
                   <MultiInputsContainer
