@@ -2,7 +2,7 @@ import { Button, Col, Form, Input, Select, Row } from "antd";
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AppLayout } from '../common/AppLayout';
-
+import contracts from "../../../public/contracts.json"
 
 export const HomeContent = () => {
   const [redirectUrl, setRedirectUrl] = useState(undefined)
@@ -10,6 +10,8 @@ export const HomeContent = () => {
     const url = `/${val.address}/${val.input_type}/${val.output_type}`
     setRedirectUrl(url)
   }
+
+  // console.log(contracts)
   if (!redirectUrl) {
     return <AppLayout>
       <div className='home_content'>
@@ -55,8 +57,16 @@ export const HomeContent = () => {
                 ]}
               />
             </Form.Item>
-            <Form.Item name="address" label="Contract address">
+            {/* <Form.Item name="address" label="Contract address">
               <Input placeholder={'Address of a proxy'} />
+            </Form.Item> */}
+            <Form.Item name="address" label="Contract address">
+              <Select
+                options={contracts.map((value, index) => ({
+                  value: value,
+                  label: `${index + 1}-${value}`,
+                }))}
+              />
             </Form.Item>
             <Row justify="center">
               <Col span={5}>
