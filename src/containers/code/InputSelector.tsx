@@ -1,10 +1,11 @@
 import { Radio, RadioChangeEvent, Row, Space, Tag } from "antd";
-import React, { HTMLProps, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export type UnavailableReason = 'TOKEN_LENGTH_EXCEEDED' | 'CODE_UNAVAILABLE' ;
 
 export interface InputType {
+    address?:string,
     input_type:string,
     output_type?:string,
     timestamp?:number,
@@ -19,6 +20,7 @@ export interface LeftSide {
 }
 
 export interface Result {
+    address:string,
     input_type:string,
     output_type:string,
     timestamp?:number,
@@ -33,15 +35,6 @@ export interface InputTypePros {
 export interface ResultProps {
     results: Result[]
 }
-// const formatDate = (ts: string) => {
-//     const m = new Date(parseInt(ts));
-//     return `${m.toDateString()} ${m.toLocaleTimeString()}`
-// }
-
-// const formatDate = (ts: number) => {
-//     const m = new Date(ts);
-//     return `${m.toDateString()} ${m.toLocaleTimeString()}`
-// }
 
 function formatDate(timestamp: number): string {
     const date = new Date(timestamp * 1000);
@@ -67,7 +60,7 @@ function renderTag(input_type: InputType) {
 }
 
 export const getKey = (u: InputType) => {
-    return `${u.input_type.toLowerCase()}`;
+    return `${u.address}_${u.input_type}_${u.output_type}`;
 }
 
 export interface DisabledOptionCardProps {
@@ -120,40 +113,18 @@ export const getOptionCard = (input_type: InputType) => {
 }
 
 export const InputSelector = (prop:InputTypePros) => {
-    // let [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate()
+
     let input_types = prop.input_types
-    console.log("InputSelector"+ prop)
-    // const inputsIndex = results.reduce((ind, u, i) => {
-    //     ind[getKey(u)] = [u, i]
-    //     return ind;
-    // }, {})
+    const setNewValue = (e: RadioChangeEvent) => {
+        const values = e.target.value.split("_")
+        
+        navigate(`/${values[0]}/${values[1]}/${values[2]}`)
 
-    // const setNewValue = (e: RadioChangeEvent) => {
-    //     const id = e.target.value;
-    //     const [input_type, index] = inputsIndex[id];
-    //     props.setSelectedDiff(input_type);
-    //     searchParams.set('selected', (input_types.length - index).toString())
-    //     setSearchParams(searchParams);
-    // }
-
-    // let selectedSearchParam = undefined
-    // try {
-    //     selectedSearchParam = parseInt(searchParams.get('selected'))
-    // } catch (e) { }
-
-    // let _selected = selectedSearchParam >= input_types.length ? 0 : input_types.length - selectedSearchParam
-    // if (!selectedSearchParam) {
-    //     _selected = 0;
-    // }
-
-    // useEffect(() => {
-    //     if (selectedSearchParam)
-    //         props.setSelectedDiff(input_types[input_types.length - selectedSearchParam]);
-    // })
-    // let _selected = 0
-    // const _selectedKey = getKey(input_types[_selected]);
-    // return <Radio.Group defaultValue={_selectedKey} buttonStyle="solid" onChange={setNewValue}>
-    return <Radio.Group defaultValue={1} buttonStyle="solid">
+    }
+    let _selected = 0
+    const _selectedKey = getKey(input_types[_selected]);
+    return <Radio.Group defaultValue={_selectedKey} buttonStyle="solid" onChange={setNewValue}>
         <Space direction="vertical">
             {
                 input_types.map(u => {
