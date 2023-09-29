@@ -123,7 +123,8 @@ export const InputSelector = (prop:InputTypePros) => {
 
     }
     let _selected = 0
-    const _selectedKey = getKey(input_types[_selected]);
+    const _selectItem = input_types.filter((item) => item.selected);
+    const _selectedKey = getKey(_selectItem[0]);
     return <Radio.Group defaultValue={_selectedKey} buttonStyle="solid" onChange={setNewValue}>
         <Space direction="vertical">
             {
