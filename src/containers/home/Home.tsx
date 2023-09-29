@@ -7,7 +7,7 @@ import { AppLayout } from '../common/AppLayout';
 export const HomeContent = () => {
   const [redirectUrl, setRedirectUrl] = useState(undefined)
   const onFinish = (val: any) => {
-    const url = `/${val.format}/${val.language}/${val.address}`
+    const url = `/${val.address}/${val.input_type}/${val.output_type}`
     setRedirectUrl(url)
   }
   if (!redirectUrl) {
@@ -19,8 +19,8 @@ export const HomeContent = () => {
             layout="vertical"
             onFinish={onFinish}
             initialValues={{
-              'format': 'DecompiledCode',
-              'language': 'Solidity',
+              'input_type': 'DecompiledCode',
+              'output_type': 'Solidity',
               'address': '0x0b76544f6c413a555f309bf76260d1e02377c02a',
             }}>
             {/* <Form.Item name="network" label="Network">
@@ -38,7 +38,7 @@ export const HomeContent = () => {
                 ]}
               />
             </Form.Item> */}
-            <Form.Item name="format" label="Input Format">
+            <Form.Item name="input_type" label="Input Format">
               <Select
                 options={[
                   {value: "Bytecode", label:'Bytecode'},
@@ -47,7 +47,7 @@ export const HomeContent = () => {
                 ]}
               />
             </Form.Item>
-            <Form.Item name="language" label="Transformed Language">
+            <Form.Item name="output_type" label="Transformed Language">
               <Select
                 options={[
                   {value: "Solidity", label:'Solidity'},
