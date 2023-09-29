@@ -122,7 +122,6 @@ export const InputSelector = (prop:InputTypePros) => {
         navigate(`/${values[0]}/${values[1]}/${values[2]}`)
 
     }
-    let _selected = 0
     const _selectItem = input_types.filter((item) => item.selected);
     const _selectedKey = getKey(_selectItem[0]);
     return <Radio.Group defaultValue={_selectedKey} buttonStyle="solid" onChange={setNewValue}>

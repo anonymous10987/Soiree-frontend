@@ -1,22 +1,23 @@
 import { Layout } from 'antd';
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {
-    Route,
-    BrowserRouter as Router,
-    Routes,
-    useMatch
+  Route,
+  BrowserRouter as Router,
+  Routes,
+  useMatch
 } from "react-router-dom";
 import { AppLayout } from './containers/common/AppLayout';
 import { HomeContent } from './containers/home/Home';
-import axios from 'axios';
 
-import ReactMarkdown from 'react-markdown'
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
-import {dark, vs} from 'react-syntax-highlighter/dist/esm/styles/prism'
 import Sider from 'antd/es/layout/Sider';
 import { Content } from 'antd/es/layout/layout';
-import {InputType, InputSelector, Result} from './containers/code/InputSelector';
+import { CodeSelector } from './containers/code/CodeSelector';
+import { InputSelector, Result } from './containers/code/InputSelector';
 import { SelectorSkeleton } from './containers/code/SelectorSkeleton';
+
+import { ErrorContent } from './components/error/ErrorContent';
+
 
 export interface BaseParams {
     address?: string,
@@ -35,50 +36,6 @@ interface BaseParamsProps {
   setError: (err: string) => void
   error: string
   selectedSearchParam?: number;
-}
-
-export function DataLoader(props: BaseParamsProps) {
-  const [data, setData] = useState<any>(null);
-  const baseParams = props.getBaseParams(props)
-  // console.log(baseParams)
-  useEffect(() => {
-    axios.get(`http://localhost:3003/data/${baseParams.address}/${baseParams.output_type}/${baseParams.input_type}.json`)
-      .then((response) => {
-        setData(response.data["choices"][0]["message"]["content"])
-      })
-      .catch((error) => {
-        console.error(`Error loading data for address ${baseParams.address}: ${error}`);
-      });
-  }, [baseParams.address]);
-  
-  return (
-    <div>
-      <h1>Data for Address: {baseParams.address}</h1>
-      <ReactMarkdown
-        children={data}
-        components={{
-          code(props) {
-            const {children, className, inline, node, ...rest} = props
-            const match = /output_type-(\w+)/.exec(className || '')
-            return !inline && match ? (
-              <SyntaxHighlighter
-                {...rest}
-                children={String(children).replace(/\n$/, '')}
-                style={vs}
-                showLineNumbers
-                output_type={match[1]}
-                PreTag="div"
-              />
-            ) : (
-              <code {...rest} className={className}>
-                {children}
-              </code>
-            )
-          }
-        }}
-      ></ReactMarkdown>
-    </div>
-  );
 }
 
 export function MultiInputsContainer(props: BaseParamsProps) {
@@ -149,7 +106,14 @@ export function MultiInputsContainer(props: BaseParamsProps) {
                 background: 'white'
             }}>
             <div className='code_viewer'>
-                Hello world
+              {
+                results?.length > 0 ?
+                <CodeSelector
+                  response={results.filter((item) => item.selected)[0].response}
+                />
+                :
+                <ErrorContent error='not in sampling'/>
+              }
             </div>
 
             </Content>
@@ -173,7 +137,6 @@ export const CodeRoutes = () => {
             element={
                 <HomeContent />
             } />
-        {/* <Route path="/:input_type/:output_type/:address" element={ */}
         <Route path="/:address/:input_type/:output_type" element={
             <AppLayout>
                 <Layout>
