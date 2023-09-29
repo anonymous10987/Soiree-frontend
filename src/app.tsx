@@ -39,6 +39,7 @@ interface BaseParamsProps {
 }
 
 export function MultiInputsContainer(props: BaseParamsProps) {
+  console.log("enter")
   const [results, setResult] = useState<any>(null);
   const baseParams = props.getBaseParams(props);
   
@@ -77,9 +78,8 @@ export function MultiInputsContainer(props: BaseParamsProps) {
   
       setResult(fetchedData);
     };
-  
     fetchData();
-  }, [baseParams.address]);
+   }, [baseParams.address]);
 
   // console.log("Input types" + input_types)
   return (<><Sider className='sider' style={{
@@ -109,7 +109,7 @@ export function MultiInputsContainer(props: BaseParamsProps) {
               {
                 results?.length > 0 ?
                 <CodeSelector
-                  response={results.filter((item) => item.selected)[0].response}
+                  response={results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type)[0].response}
                 />
                 :
                 <ErrorContent error='not in sampling'/>

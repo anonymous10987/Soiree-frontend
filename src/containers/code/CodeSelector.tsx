@@ -18,6 +18,7 @@ export interface ResponseProps{
 }
 
 export const CodeSelector = (props: ResponseProps) => {
+    console.log(props)
     return (
         <div>
           <ReactMarkdown
