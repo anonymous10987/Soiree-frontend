@@ -8,6 +8,7 @@ export interface Response{
 }
 
 export interface MetaProps{
+  type?:string,
   source_code?:string,
   language?:string
 }
@@ -17,12 +18,11 @@ export interface ResponseProps{
 }
 
 export const SourceView = (props: MetaProps) => {
-  console.log(props)
   return (
     <div>
-      <h1>Source Code</h1>
+      <h1>{props.type}</h1>
       <ReactMarkdown
-        children={`\`\`\`${props.language.toLowerCase()}\n${props.source_code}\`\`\``}
+        children={`\`\`\`${props.language.toLowerCase()}\n${props.source_code}\n\`\`\``}
         components={{
           code({ node, inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || '');
@@ -31,6 +31,7 @@ export const SourceView = (props: MetaProps) => {
                 children={String(children).replace(/\n$/, '')}
                 language={match[1]}
                 // showLineNumbers={true}
+                collapse={true}
                 wrapLongLines={true}
                 style={vs}
                 {...props}

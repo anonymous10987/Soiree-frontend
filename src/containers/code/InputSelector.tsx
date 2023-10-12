@@ -13,6 +13,7 @@ export interface InputType {
     language?:string,
     timestamp?:number,
     selected?:boolean,
+    ir:string,
     unavailable_reason?: UnavailableReason
 }
 
@@ -25,6 +26,7 @@ export interface Result {
     language:string,
     timestamp?:number,
     selected:boolean,
+    ir:string,
     response?:string,
     error?:string
 }

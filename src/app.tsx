@@ -70,6 +70,7 @@ export function MultiInputsContainer(props: BaseParamsProps) {
                   language:meta_info.data['Language'],
                   timestamp: response.data["created"],
                   selected: selected,
+                  ir:response.data['ir'],
                   error:"",
                   response: response.data["choices"][0]["message"]["content"],
                 });
@@ -83,6 +84,7 @@ export function MultiInputsContainer(props: BaseParamsProps) {
                   language:meta_info.data['Language'],
                   timestamp: response.data["created"],
                   selected: selected,
+                  ir:response.data['ir'],
                   error: response.data["status"],
                   response:""
                 })
@@ -119,46 +121,44 @@ export function MultiInputsContainer(props: BaseParamsProps) {
                   }
                 </div>
             </Sider>
-            {/* <Content style={{background: 'white'}} >
-            <div className='code_viewer'>
-              {
-                results?.length > 0 ?
-                <SourceView
-                  source_code={results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].source}
-                  language={results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].language}
-                />
-                :
-                <ErrorContent error='not in sampling'/>
-              }
-            </div>
-            </Content> */}
             <Content style={{background: 'white'}}>
               <div className='container'>
                 <div className='source_viewer'>
                 {
                   results?.length > 0 ?
                   <SourceView
+                    type='Source Code'
                     source_code={results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].source}
                     language={results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].language}
                   />
                   :
                   <ErrorContent error='not in sampling'/>
                 }
-              </div>
-              <div className='code_viewer'>
                 {
-                    results?.length > 0 ?
-                      results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].response?.length > 0?
-                        <CodeSelector
-                          response={results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].response}
-                        />
-                      :
-                      <ErrorContent error={results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].error}/>
-                    :
-                    <ErrorContent error='not in sampling'/>
+                  results?.length > 0 ?
+                  <SourceView
+                    type='Decompiled Code'
+                    source_code={results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].ir}
+                    language={results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].language}
+                  />
+                  :
+                  <ErrorContent error='not in sampling'/>
                 }
+                </div>
+                <div className='code_viewer'>
+                  {
+                      results?.length > 0 ?
+                        results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].response?.length > 0?
+                          <CodeSelector
+                            response={results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].response}
+                          />
+                        :
+                        <ErrorContent error={results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].error}/>
+                      :
+                      <ErrorContent error='not in sampling'/>
+                  }
+                </div>
               </div>
-            </div>
             </Content>
       </>)  
 }
