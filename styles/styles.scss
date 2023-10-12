@@ -16,8 +16,21 @@ body {
     padding: 10px
 }
 
+.container {
+    width: 100%;
+    display: flex;
+}
+
+.source_viewer {
+    width: 50%;
+    display:inline;
+    padding: 5px;
+}
+
 .code_viewer {
-    padding: 10px;
+    width: 50%;
+    display:inline;
+    padding: 5px;
 }
 
 .logo {
@@ -44,8 +57,8 @@ body {
 }
 
 .input_selector_option {
-    height: 60px;
-    width: 210px;
+    height: 80px;
+    width: 200px;
 }
 
 .header_socials {

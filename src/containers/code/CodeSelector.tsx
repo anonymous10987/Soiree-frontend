@@ -2,25 +2,55 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
-
 export interface Response{
     source_code?:string,
     response?:string
 }
 
-// export interface ResponseProps{
-//     responses:Response
-// }
+export interface MetaProps{
+  source_code?:string,
+  language?:string
+}
 
 export interface ResponseProps{
-    // source_code?:string,
     response?:string
 }
 
+export const SourceView = (props: MetaProps) => {
+  console.log(props)
+  return (
+    <div>
+      <h1>Source Code</h1>
+      <ReactMarkdown
+        children={`\`\`\`${props.language.toLowerCase()}\n${props.source_code}\`\`\``}
+        components={{
+          code({ node, inline, className, children, ...props }) {
+            const match = /language-(\w+)/.exec(className || '');
+            return !inline && match ? (
+              <SyntaxHighlighter
+                children={String(children).replace(/\n$/, '')}
+                language={match[1]}
+                // showLineNumbers={true}
+                wrapLongLines={true}
+                style={vs}
+                {...props}
+              />
+            ) : (
+              <code className={className} {...props}>
+                {children}
+              </code>
+            );
+          },
+        }}
+      />
+    </div>
+  );
+}
+
 export const CodeSelector = (props: ResponseProps) => {
-    console.log(props)
     return (
         <div>
+          <h1>Response</h1>
           <ReactMarkdown
             children={props.response}
             components={{
@@ -30,7 +60,8 @@ export const CodeSelector = (props: ResponseProps) => {
                   <SyntaxHighlighter
                     children={String(children).replace(/\n$/, '')}
                     language={match[1]}
-                    showLineNumbers={true}
+                    // showLineNumbers={true}
+                    wrapLongLines={true}
                     style={vs}
                     {...props}
                   />

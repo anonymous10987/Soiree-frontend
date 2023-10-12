@@ -8,24 +8,25 @@ export interface InputType {
     address?:string,
     input_type:string,
     output_type?:string,
+    model?:string,
+    source?:string,
+    language?:string,
     timestamp?:number,
     selected?:boolean,
     unavailable_reason?: UnavailableReason
-}
-
-export interface LeftSide {
-    total_data,
-    selected_input_type?:string,
-    selected_output_type?:string
 }
 
 export interface Result {
     address:string,
     input_type:string,
     output_type:string,
+    model:string,
+    source?:string,
+    language:string,
     timestamp?:number,
-    selected?:boolean,
-    response?:string
+    selected:boolean,
+    response?:string,
+    error?:string
 }
 
 export interface InputTypePros {
@@ -60,7 +61,7 @@ function renderTag(input_type: InputType) {
 }
 
 export const getKey = (u: InputType) => {
-    return `${u.address}_${u.input_type}_${u.output_type}`;
+    return `${u.address}_${u.input_type}_${u.output_type}_${u.model}`;
 }
 
 export interface DisabledOptionCardProps {
@@ -98,8 +99,8 @@ export const InputTypeCard = (props: InputCardProps) => {
             </div>
         </Row>
         <Row>
-            <Tag color="green">{props.input_type.input_type}</Tag>
-            <Tag color="orange">{props.input_type.output_type}</Tag>
+            <Tag color="blue">{props.input_type.model}</Tag>
+            <Tag color="green">{props.input_type.input_type} to {props.input_type.output_type}</Tag>
         </Row>
     </>
 }
@@ -119,7 +120,7 @@ export const InputSelector = (prop:InputTypePros) => {
     const setNewValue = (e: RadioChangeEvent) => {
         const values = e.target.value.split("_")
         
-        navigate(`/${values[0]}/${values[1]}/${values[2]}`)
+        navigate(`/${values[0]}/${values[1]}/${values[2]}/${values[3]}`)
 
     }
     const _selectItem = input_types.filter((item) => item.selected);

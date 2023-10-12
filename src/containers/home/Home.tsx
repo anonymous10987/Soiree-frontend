@@ -7,7 +7,7 @@ import contracts from "../../../public/contracts.json"
 export const HomeContent = () => {
   const [redirectUrl, setRedirectUrl] = useState(undefined)
   const onFinish = (val: any) => {
-    const url = `/${val.address}/${val.input_type}/${val.output_type}`
+    const url = `/${val.address}/${val.input_type}/${val.output_type}/${val.model}`
     setRedirectUrl(url)
   }
 
@@ -21,9 +21,10 @@ export const HomeContent = () => {
             layout="vertical"
             onFinish={onFinish}
             initialValues={{
-              'input_type': 'DecompiledCode',
+              'input_type': 'Bytecode',
               'output_type': 'Solidity',
-              'address': '0x0b76544f6c413a555f309bf76260d1e02377c02a',
+              'model': 'ChatGPT4',
+              'address': '0xa0a4a2af46af4cf37eacc495eedcae269ef2720e',
             }}>
             {/* <Form.Item name="network" label="Network">
               <Select
@@ -57,6 +58,14 @@ export const HomeContent = () => {
                 ]}
               />
             </Form.Item>
+            <Form.Item name="model" label="Large Language Model">
+              <Select
+                options={[
+                  {value: "ChatGPT4", label:'ChatGPT-4 (8k)'},
+                  {value: "ChatGPT4-32k", label:'ChatGPT-4 (32k)'}
+                ]}
+              />
+            </Form.Item>
             {/* <Form.Item name="address" label="Contract address">
               <Input placeholder={'Address of a proxy'} />
             </Form.Item> */}
@@ -68,18 +77,16 @@ export const HomeContent = () => {
                 }))}
               />
             </Form.Item>
-            <Row justify="center">
               <Col span={5}>
                 <Button type="primary" htmlType="submit">
                   Go
                 </Button>
               </Col>
-              <Col span={5}>
+              {/* <Col span={5}>
                 <Button type="primary" htmlType="submit">
                   Random
                 </Button>
-              </Col>
-            </Row>
+              </Col> */}
           </Form>
         </Col>
       </div>
