@@ -40,7 +40,7 @@ export function MultiInputsContainer(props: BaseParamsProps) {
   useEffect(() => {
     const fetchData = async () => {
       const fetchedData: Result[] = [];
-      const input_types = ["Bytecode", "DecompiledCode"]
+      const input_types = ["Bytecode", "DecompiledCode","RawDescription","SemanticDescription","LayedDescription"]
       // const output_types = ["Solidity", "Vyper"]
       const output_types = ["Solidity"]
       const models = ["ChatGPT4","ChatGPT4-32k"]

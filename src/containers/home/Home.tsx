@@ -46,7 +46,9 @@ export const HomeContent = () => {
                 options={[
                   {value: "Bytecode", label:'Bytecode'},
                   {value: "DecompiledCode", label:'DecompiledCode'},
-                  {value: "Description", label:'Description'}                  
+                  {value: "RawDescription", label:'Description (Raw)'},
+                  {value: "SemanticDescription", label:'Description (w Semantic)'},
+                  {value: "LayedDescription", label:'Description (w Semantic & States)'}
                 ]}
               />
             </Form.Item>
@@ -54,7 +56,7 @@ export const HomeContent = () => {
               <Select
                 options={[
                   {value: "Solidity", label:'Solidity'},
-                  {value: "Vyper", label:'Vyper'}
+                  // {value: "Vyper", label:'Vyper'}
                 ]}
               />
             </Form.Item>
