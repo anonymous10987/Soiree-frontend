@@ -31,7 +31,6 @@ module.exports = [{
     extensions: ['.tsx', '.ts', '.js', '.json'],
   },
   devServer: {
-    host: '192.168.1.26',
     port: 3003,
     historyApiFallback: {
       index: 'index.html'
