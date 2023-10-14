@@ -22,7 +22,7 @@ export const SourceView = (props: MetaProps) => {
     <div>
       <h1>{props.type}</h1>
       <ReactMarkdown
-        children={`\`\`\`${props.language.toLowerCase()}\n${props.source_code}\n\`\`\``}
+        children={props.language?.length > 0? `\`\`\`${props.language.toLowerCase()}\n${props.source_code}\n\`\`\``:props.source_code}
         components={{
           code({ node, inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || '');

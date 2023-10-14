@@ -137,9 +137,9 @@ export function MultiInputsContainer(props: BaseParamsProps) {
                 {
                   results?.length > 0 ?
                   <SourceView
-                    type='Decompiled Code'
+                    type={baseParams.input_type}
                     source_code={results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].ir}
-                    language={results.filter((item) => item.input_type == baseParams.input_type && item.output_type == baseParams.output_type && item.model == baseParams.model)[0].language}
+                    language={baseParams.input_type == "DecompiledCode"? "Solidity":""}
                   />
                   :
                   <ErrorContent error='not in sampling'/>
